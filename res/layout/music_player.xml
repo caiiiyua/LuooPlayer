@@ -1,27 +1,85 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <Gallery
-        android:id="@+id/covers"
-        android:layout_width="wrap_content"
-        android:layout_height="364dp"
-        android:layout_margin="2dp" />
-
-    <MediaController
-        android:id="@+id/musicplayer"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/cover_container"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.84" >
+        android:paddingBottom="1dp"
+        android:gravity="center">
+    <ImageView
+        android:id="@+id/cover"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/cover"/>
+    </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/progressBar1"
-            style="?android:attr/progressBarStyleHorizontal"
+    <LinearLayout
+        android:id="@+id/vol_description_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/text_bg_img"
+        android:layout_below="@id/cover_container"
+        android:gravity="center">
+    <TextView 
+        android:id="@+id/vol_description"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:lines="6"
+        android:text="Vol 400: hello"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/player_container"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:background="@layout/bg_player_footer"
+        android:orientation="vertical"
+        >
+        <SeekBar
+            android:id="@+id/seekBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"/>
+        <LinearLayout 
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+        <!-- Backward Button -->
+            <ImageButton
+                android:id="@+id/btnPrevious"
+                android:src="@drawable/btn_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"/>
+            <!-- Play Button -->
+            <ImageButton
+                android:id="@+id/btnPlay"
+                android:src="@drawable/btn_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="25dp"
+                android:paddingRight="25dp"
+                android:background="@null"/>
+            <!-- Forward Button -->
+            <ImageButton
+                android:id="@+id/btnNext"
+                android:src="@drawable/btn_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"/>
+        </LinearLayout>
+    </LinearLayout>
 
-    </MediaController>
-
-</LinearLayout>
+</RelativeLayout>

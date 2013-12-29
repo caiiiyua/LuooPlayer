@@ -1,23 +1,21 @@
 package com.luoo.musicplayer;
 
 
-import android.os.Build;
-import android.os.Bundle;
-//import android.os.Trace;
-import android.R.integer;
+import com.luoo.musicplayer.adapter.VolMetaInfo;
+import com.luoo.musicplayer.ui.MusicPlayerFragment;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.text.TextUtils;
+import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+//import android.os.Trace;
 
 public class MainActivity extends Activity {
 
@@ -34,12 +32,12 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         int version = Build.VERSION.SDK_INT;
         Log.d(TAG, Build.MODEL);
-        Fragment fragment = new DemoFragment();
+        Fragment fragment = new MusicPlayerFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         if (transaction != null) {
             transaction.add(R.id.view_container, fragment);
             transaction.commit();
-        }        
+        }
 //        Trace.endSection();
     }
 

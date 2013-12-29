@@ -30,7 +30,7 @@
             android:icon="@drawable/ic_launcher"
             android:logo="@drawable/ic_launcher">
         </activity>
-        <service android:name="com.luoo.musicplayer.MusicPlayerService"/>
+        <service android:name="com.luoo.musicplayer.service.MusicPlayerService"/>
     </application>
 
 </manifest>
