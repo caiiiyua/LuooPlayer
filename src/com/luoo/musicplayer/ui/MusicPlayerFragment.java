@@ -84,11 +84,18 @@ public class MusicPlayerFragment extends Fragment implements OnClickListener {
             }
             break;
         case R.id.btnNext:
+            Intent next = MusicPlayerService.actionNextMusicIntent(getActivity());
+            getActivity().startService(next);
+            mInitPlay = true;
+            mPlayed = true;
+            mBtnPlay.setImageResource(R.drawable.btn_pause);
+            break;
         case R.id.btnPrevious:
-            Intent intent = MusicPlayerService.actionStopMusicIntent(getActivity());
-            getActivity().startService(intent);
-            mInitPlay = false;
-            mPlayed = false;
+            Intent previous = MusicPlayerService.actionPreviousMusicIntent(getActivity());
+            getActivity().startService(previous);
+            mInitPlay = true;
+            mPlayed = true;
+            mBtnPlay.setImageResource(R.drawable.btn_pause);
             break;
         default:
             break;

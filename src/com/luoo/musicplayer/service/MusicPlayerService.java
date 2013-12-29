@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.SoundPool.OnLoadCompleteListener;
@@ -23,7 +24,7 @@ import android.os.Message;
 import android.util.Log;
 
 public class MusicPlayerService extends Service implements OnPreparedListener, OnErrorListener,
-        OnAudioFocusChangeListener {
+        OnAudioFocusChangeListener, OnCompletionListener {
 
     private static final String TAG = "MusicPlayerSerivce";
     private static final String ACTION_PLAY = "com.music.action.PLAY";
@@ -31,10 +32,14 @@ public class MusicPlayerService extends Service implements OnPreparedListener, O
     private static final String ACTION_PAUSE = "com.music.action.PAUSE";
     private static final String ACTION_SEEKTO = "com.music.action.SEEKTO";
     private static final String ACTION_RESUME = "com.music.action.RESUME";
-    
+    private static final String ACTION_NEXT = "com.music.action.NEXT";
+    private static final String ACTION_PREVIOUS = "com.music.action.PREVIOUS";
+
     private MediaPlayer mPlayer = null;
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
+    private VolMetaInfo mVolInfo;
+    private int mTrackId;
 
     public MusicPlayerService() {
         super();
@@ -77,8 +82,9 @@ public class MusicPlayerService extends Service implements OnPreparedListener, O
         if (mPlayer == null) {
             init();
         }
+
         try {
-            Log.d(TAG, "Play with MusicPlayer: " + mPlayer);
+            Log.d(TAG, "Play with MusicPlayer: " + mPlayer + " uri: " + uri);
             mPlayer.setDataSource(uri);
             mPlayer.prepareAsync();
         } catch (IllegalArgumentException e) {
@@ -94,9 +100,7 @@ public class MusicPlayerService extends Service implements OnPreparedListener, O
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        testInfo();
     }
-
 
     public VolMetaInfo testInfo() {
         final String URL_TEST = "http://www.luoo.net/";
@@ -107,6 +111,7 @@ public class MusicPlayerService extends Service implements OnPreparedListener, O
     }
 
     private final class ServiceHandler extends Handler {
+
         public ServiceHandler(Looper looper) {
             super(looper);
         }
@@ -118,10 +123,15 @@ public class MusicPlayerService extends Service implements OnPreparedListener, O
             Intent intent = (Intent) msg.obj;
             if (intent == null) return;
 
+            if (mVolInfo == null) {
+                mVolInfo = testInfo();
+                mTrackId = 1;
+            }
             String action = intent.getAction();
             String uri = intent.getDataString();
             Log.d(TAG, "Handle action: " + action + " with URI: " + uri);
             if (ACTION_PLAY.equals(action)) {
+                uri = mVolInfo.getTrackUri(mTrackId).toString();
                 play(uri);
             } else if (ACTION_PAUSE.equals(action)) {
                 pause();
@@ -131,6 +141,12 @@ public class MusicPlayerService extends Service implements OnPreparedListener, O
                 
             } else if (ACTION_RESUME.endsWith(action)) {
                 resume();
+            } else if (ACTION_NEXT.endsWith(action)) {
+//                stop();
+                playNext();
+            } else if (ACTION_PREVIOUS.endsWith(action)) {
+//                stop();
+                playPrevious();
             }
         }
     }
@@ -163,6 +179,18 @@ public class MusicPlayerService extends Service implements OnPreparedListener, O
         Intent intent = new Intent(context, MusicPlayerService.class);
         intent.setAction(ACTION_PLAY);
         intent.setData(Uri.parse(uri));
+        return intent;
+    }
+
+    public static Intent actionNextMusicIntent(Context context) {
+        Intent intent = new Intent(context, MusicPlayerService.class);
+        intent.setAction(ACTION_NEXT);
+        return intent;
+    }
+
+    public static Intent actionPreviousMusicIntent(Context context) {
+        Intent intent = new Intent(context, MusicPlayerService.class);
+        intent.setAction(ACTION_PREVIOUS);
         return intent;
     }
 
@@ -270,5 +298,29 @@ public class MusicPlayerService extends Service implements OnPreparedListener, O
             }
             break;
         }
+    }
+
+    public void playNext() {
+        mPlayer.reset();
+        long trackId = mTrackId + 1;
+        String uri = mVolInfo.getTrackUri(trackId).toString();
+        play(uri);
+        mTrackId = (int) trackId;
+    }
+
+    public void playPrevious() {
+        mPlayer.reset();
+        long trackId = mTrackId - 1;
+        if (trackId < 1) {
+            trackId = 1;
+        }
+        String uri = mVolInfo.getTrackUri(trackId).toString();
+        play(uri);
+        mTrackId = (int) trackId;
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        playNext();
     }
 }

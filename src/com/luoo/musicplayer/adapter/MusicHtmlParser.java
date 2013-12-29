@@ -115,9 +115,72 @@ public class MusicHtmlParser {
         return volMetaInfo;
     }
 
-    public ArrayList<MusicMetaInfo> getMusicList() {
-        // TODO Auto-generated method stub
-        return null;
+    public ArrayList<MusicMetaInfo> getMusicList(long volId) throws IOException {
+        Document document = getDocument();
+        ArrayList<MusicMetaInfo> musicMetaInfos = new ArrayList<MusicMetaInfo>();
+        for (Element element : document.getElementsByClass("track")) {
+            if ("div".equals(element.tagName())){
+                MusicMetaInfo metaInfo = new MusicMetaInfo(volId);
+                metaInfo.setTrackId(getTrackId(element));
+                metaInfo.setName(getTrackName(element));
+                metaInfo.setAlbum(getTrackAlbum(element));
+                metaInfo.setCoverUri(Uri.parse(getTrackCover(element)));
+                Uri trackUri = Uri.parse(LuooConstantUtils
+                        .buildMusicTrackUri(volId, metaInfo.getTrackId()));
+                metaInfo.setTrackUri(trackUri);
+                Log.d(TAG, "Track info: " + metaInfo);
+                musicMetaInfos.add(metaInfo);
+            }
+        }
+        return musicMetaInfos;
+    }
+
+    public long getTrackId(Element parentElement) throws IOException {
+        String trackIdString = "0";
+        for (Element element : parentElement.getElementsByClass("track-num")) {
+            if ("span".equals(element.tagName())){
+                Log.d(TAG, "track-num:" + element.text());
+                trackIdString = element.text();
+                break;
+            }
+        }
+        return Long.valueOf(trackIdString);
+    }
+
+    public String getTrackCover(Element parentElement) throws IOException {
+        String trackCover = "";
+        for (Element element : parentElement.getElementsByClass("track-cover")) {
+            if ("img".equals(element.tagName())){
+                Log.d(TAG, "track-cover:" + element.attr("src"));
+                trackCover = element.attr("src");
+                break;
+            }
+        }
+        return trackCover;
+    }
+
+    public String getTrackName(Element parentElement) throws IOException {
+        String trackName = "";
+        for (Element element : parentElement.getElementsByClass("track-name")) {
+            if ("a".equals(element.tagName())){
+                Log.d(TAG, "track-name:" + element.text());
+                trackName = element.text();
+                break;
+            }
+        }
+        return trackName;
+    }
+
+    public String getTrackAlbum(Element parentElement) throws IOException {
+        String trackAlbum = "";
+        for (Element element : parentElement.getElementsByClass("track-album")) {
+            if ("a".equals(element.tagName())){
+                Log.d(TAG, "track-album:" + element.text());
+                trackAlbum = element.text();
+                break;
+            }
+        }
+        return trackAlbum;
     }
 
     public Element getElementById(String id) throws IOException {

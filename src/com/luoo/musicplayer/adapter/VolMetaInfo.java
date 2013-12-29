@@ -50,10 +50,10 @@ public class VolMetaInfo {
             mTopic = mMusicParser.getVolTopic();
             mDescription = mMusicParser.getVolDescription();
             mVolId = mMusicParser.getVolId();
-            mUrlString = buildVolUrl(mVolId);
-            mMusicUriBase = buildMusicUriBase(mVolId);
+            mUrlString = LuooConstantUtils.buildVolUrl(mVolId);
+            mMusicUriBase = LuooConstantUtils.buildMusicUriBase(mVolId);
             mCoverUri = Uri.parse(mMusicParser.getVolCover());
-            mMusicList = mMusicParser.getMusicList();
+            mMusicList = mMusicParser.getMusicList(mVolId);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -62,15 +62,16 @@ public class VolMetaInfo {
         return true;
     }
 
-    private String buildMusicUriBase(long volId) {
-        String urlString = LuooConstantUtils.LUOO_URL_MUSIC_BASE;
-        return String.format(urlString, volId);
-    }
-
-    private String buildVolUrl(long volId) {
-        String urlString = LuooConstantUtils.LUOO_URL_BASE;
-        
-        return String.format("%s%d", urlString, volId);
+    public Uri getTrackUri(long trackId) {
+        Log.d(LuooConstantUtils.TAG, "getTrackUri with id:" + trackId);
+        if (mMusicList == null) return null;
+        for (MusicMetaInfo metaInfo : mMusicList) {
+            Log.d(LuooConstantUtils.TAG, "getTrackUri with metainfo:" + metaInfo);
+            if (metaInfo.getTrackId() == trackId) {
+                return metaInfo.getTrackUri();
+            }
+        }
+        return null;
     }
 
     public String toString() {
